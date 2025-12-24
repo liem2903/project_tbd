@@ -7,7 +7,8 @@ import {
      createRefreshTokenLogic,
      storeRefreshToken, 
      createAccessTokenBusiness,     
-     rotateRefreshToken
+     rotateRefreshToken,
+     logoutBusiness
     } from "../business/authBusiness.js";
 import dotenv from 'dotenv';
 dotenv.config();
@@ -87,7 +88,7 @@ export async function createAccessToken(req, res) {
 export async function refresh(req, res) {
     try {
         let user_id = req.userId;
-       
+        
         const refresh_token = await createRefreshTokenLogic();
         await rotateRefreshToken(refresh_token.code, user_id, refresh_token.expiresAt);
 
@@ -124,3 +125,25 @@ export async function checkUser(req, res) {
     }
 }
 
+export async function logout(req, res) {
+    try {
+        let user_id = req.user.user_id;
+        await logoutBusiness(user_id);
+
+        res.clearCookie("access_token", {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+        });
+
+        res.clearCookie("refresh_token", {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+        })
+
+        return res.status(200).json({success: true});
+    } catch (err) {
+        return res.status(400).json({success: false});
+    }
+}

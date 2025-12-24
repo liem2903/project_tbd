@@ -9,21 +9,22 @@ function ProtectedRoute() {
     const navigate = useNavigate();
 
     useEffect(() => {      
-        if (status == 'Unauthenticated') {
+        if (status == 'unauthenticated') {
             navigate('/');
         }
     }, [status, navigate])
 
-    if (status == 'Unauthenticated') {
+    if (status == 'loading') {
         return <Spinner/> 
+    } else {
+        return (
+            <>
+                <Header/>
+                <Outlet/>        
+            </>
+        )
+    }
     }
 
-    return (
-        <>
-            <Header/>
-            <Outlet/>        
-        </>
-    )
-}
 
 export default ProtectedRoute;

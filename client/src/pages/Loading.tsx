@@ -1,12 +1,13 @@
-import { useEffect, useRef,   } from 'react';
-import { useNavigate } from "react-router";
-
+import { useEffect, useRef} from 'react';
 import axios from 'axios';
 import Spinner from './component/Spinner';
+import useAuth from '../context/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 function Loading() {
     let hasRun = useRef<boolean>(false);
-    let navigate = useNavigate();
+    const { setStatus } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const value = async () => {
@@ -21,6 +22,7 @@ function Loading() {
             await axios.post('/api/auth/create-refresh-token', {user_id});
             // Create access token and put it in cookie.
             await axios.post('/api/auth/create-access-token', {user_id});
+            setStatus('authenticated');
             navigate('/home');
         }
 

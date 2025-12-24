@@ -6,7 +6,9 @@ import {
      storeRefreshGoogleData, 
      storeRefreshTokenData,
      rotateRefreshTokenData,
+     logoutData,
  } from "../data_access/authRepository.js";
+
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
@@ -61,4 +63,12 @@ export async function rotateRefreshToken(refresh_token, user_id, expires_at) {
 export async function createAccessTokenBusiness(user_id) {
     const user = {user_id};
     return jwt.sign(user, process.env.ACCESS_TOKEN_ENCRYPTION_KEY, {expiresIn: "15m",});
+}
+
+export async function logoutBusiness(user_id) {
+    try {
+        return logoutData(user_id);
+    } catch (err) {
+        throw new Error(err.message());
+    }
 }

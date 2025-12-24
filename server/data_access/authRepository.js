@@ -112,3 +112,13 @@ export async function rotateRefreshTokenData(refresh_token, user_id, expires_at)
         console.log(err.message);
     }
 }
+
+export async function logoutData(user_id) {
+    try {        
+        await pool.query(
+            `DELETE FROM public.refresh_tokens WHERE user_id = $1`, [user_id]
+        )
+    } catch (err) {
+        console.log(err.message);
+    }
+}
