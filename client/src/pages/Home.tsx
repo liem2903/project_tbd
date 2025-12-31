@@ -1,12 +1,38 @@
 import Event from "./component/Event";
-import { useEffect } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { DateTime } from 'luxon';
+import { api } from "../interceptor/interceptor";
 
+type Event = {
+    eventName: string,
+    timeStart: string,
+    duration: string
+}
 
 function Home () {
+    const [ events, setEvents ] = useState<Event[]>([]);
+
     useEffect(() => {
+
         const getAccess = async () => {
-            let result = await axios.get('/api/auth/getCalender');
+            let res = await api.get('/auth/getCalender');
+            let calenderData = res.data.data;
+            let resEvents: Event[] = []
+            
+            calenderData.map((data: any) => {
+                let startDate = DateTime.fromISO(data.start.dateTime);
+                let endDate = DateTime.fromISO(data.end.dateTime);
+
+                let event = {
+                    eventName: data.summary,
+                    timeStart: startDate.toFormat("h:mma"),
+                    duration: `${endDate.diff(startDate, 'hours').hours}`
+                }
+
+                resEvents.push(event);
+            })
+
+            setEvents(resEvents);
         }
 
         getAccess();
@@ -15,13 +41,12 @@ function Home () {
     return (
         <div className="flex gap-10 justify-evenly mt-10 relative">
             <div className="flex flex-col items-center gap-20">    
-                <Event time={"10:30am"} place={"Sanctuary Hotel"} action={"Drinking Alcohol"} day={"Today"}/> 
-                <Event time={"3:30pm"} place={"Ben's House"} action={"League"} day={"Today"}/> 
+               { events.map((e) => <Event startTime={e.timeStart.toLowerCase()} action={e.eventName} day={"Today"} duration={e.duration}/>)}
             </div>
 
             <div className="flex flex-col items-center gap-20 mt-15">   
-                <Event time={"2:00pm"} place={"Sanctuary Hotel"} action={"Drinking Alcohol"} day={"Tomorrow"}/>  
-                <Event time={"5:00pm"} place={"Perry Park Stadium"} action={"Playing Volleyball"} day={"Tomorrow"}/>  
+                <Event startTime={"2:00pm"} action={"Drinking Alcohol"} day={"Tomorrow"} duration={"3"}/>  
+                <Event startTime={"5:00pm"} action={"Playing Volleyball"} day={"Tomorrow"} duration={"2"}/>  
             </div>
 
             <div className="absolute w-0.5 border opacity-2 shadow-2xl h-150"></div>

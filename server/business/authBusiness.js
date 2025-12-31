@@ -7,12 +7,13 @@ import {
      storeRefreshTokenData,
      rotateRefreshTokenData,
      logoutData,
-     getCalenderData
+     getCalenderData,
+     getTimezoneData
  } from "../data_access/authRepository.js";
 
+import { DateTime } from 'luxon';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
-import e from "express";
 import jwt from 'jsonwebtoken';
 dotenv.config();
 
@@ -37,6 +38,7 @@ export async function storeRefreshGoogle(user_id, google_token) {
 }
  
 export async function createRefreshTokenLogic() {
+    console.log("CREATE REFRESH TOKEN");
     let code = crypto.randomBytes(64).toString("hex");
 
     let expiresAt = new Date();
@@ -67,28 +69,28 @@ export async function createAccessTokenBusiness(user_id) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_ENCRYPTION_KEY, {expiresIn: "15m",});
 }
 
-export async function logoutBusiness(user_id) {
+export async function logoutBusiness(refresh_token) {
     try {
-        return logoutData(user_id);
+        return logoutData(refresh_token);
     } catch (err) {
         throw new Error(err.message());
     }
 }
 
-export async function getCalenderBusiness(access_token) {
+export async function getCalenderBusiness(access_token, time_zone) {
     try {
-        const now = new Date();
+        const time_min = DateTime.now().setZone(time_zone).startOf("day").toUTC().toISO();
+        const time_max = DateTime.now().setZone(time_zone).plus({days: 1}).startOf("day").toUTC().toISO();
 
-        const start = new Date(now);
-        start.setUTCHours(0, 0, 0);
-        const end = newDate(start);
-        end.setUTCDate(end.getUTCDate() + 1);
+        return getCalenderData(access_token, time_min, time_max);
+    } catch (err) {
+        throw new Error(err.message());
+    }
+}
 
-        const timeMin = start.toISOString();
-        const timeMax = end.toISOString();
-
-
-        return getCalenderData(access_token);
+export async function getTimezoneBusiness(access_token) {
+    try {
+        return getTimezoneData(access_token)
     } catch (err) {
         throw new Error(err.message());
     }

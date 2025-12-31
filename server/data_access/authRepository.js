@@ -3,7 +3,6 @@ dotenv.config();
 
 import axios from 'axios'; 
 import pool from '../data.js';
-
 export async function getGoogleTokenData (code) {
     try {
         const params = new URLSearchParams({
@@ -11,8 +10,7 @@ export async function getGoogleTokenData (code) {
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
         redirect_uri: 'http://localhost:5173/loading',
-        grant_type: 'authorization_code',
-    });
+        grant_type: 'authorization_code',});
 
         const tokenRes = await axios.post(
             'https://oauth2.googleapis.com/token',   
@@ -97,9 +95,9 @@ export async function checkRefreshToken(refresh_token) {
             `SELECT user_id FROM public.refresh_tokens WHERE refresh_token = $1`, [refresh_token]
         )
 
-        return data.rows[0].user_id ?? null;
+        return data.rows[0].user_id;
     } catch (err) {
-        console.log(err.message);
+       return null;
     }
 }
 
@@ -113,10 +111,10 @@ export async function rotateRefreshTokenData(refresh_token, user_id, expires_at)
     }
 }
 
-export async function logoutData(user_id) {
+export async function logoutData(refresh_token) {
     try {        
         await pool.query(
-            `DELETE FROM public.refresh_tokens WHERE user_id = $1`, [user_id]
+            `DELETE FROM public.refresh_tokens WHERE refresh_token = $1`, [refresh_token]
         )
     } catch (err) {
         console.log(err.message);
@@ -154,24 +152,47 @@ export async function refreshAccessToken(refresh_token) {
 
         return {
             access_token: data.access_token,
-            expiry_time: data.expires_in
+            expires_in: data.expires_in
         };
     } catch (err) {
-        throw new Error(data.error);
+        console.log(err.message);
     }
 }
 
-export async function getCalenderData(access_token) {
+export async function getCalenderData(access_token, time_min, time_max) {
     try {
-        const url = new URL("/https://www.googleapis.com/calendar/v3/calendars/primary/events");
-        url.searchParams.set("timeMin", )
-        url.searchParams.set("timeMax", )
+        const url = new URL("https://www.googleapis.com/calendar/v3/calendars/primary/events");
 
+        url.searchParams.set("timeMin", time_min)
+        url.searchParams.set("timeMax", time_max)
         url.searchParams.set("orderBy", "startTime");
-        url.searchParams.set("singleEvents", true);
-        const res = await fetch('/')
+        url.searchParams.set("singleEvents", "true");
+        const res = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            }
+        });
 
+        return res.data;
     } catch (err) {
+        throw new Error(err.response?.data?.error?.message || err.message);
+    }
+}
 
+export async function getTimezoneData(access_token) {
+    try {
+        const url = new URL("https://www.googleapis.com/calendar/v3/calendars/primary");
+        
+        const res = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+        });
+
+        return res.data.timeZone;
+    } catch (err) {
+        console.log(err.response?.status);
+        console.log(err.response?.data); 
+        console.log(err.message);
     }
 }

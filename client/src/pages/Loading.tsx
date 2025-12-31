@@ -16,8 +16,7 @@ function Loading() {
 
             const code = new URLSearchParams(location.search).get("code");
             const googleData = await axios.get('/api/auth/get-google-details', {params: {code}});
-            const user_id = googleData.data.data;
-            
+            const user_id = googleData.data.data;            
             // Create refresh token and post it - and make a cookie of it.
             await axios.post('/api/auth/create-refresh-token', {user_id});
             // Create access token and put it in cookie.

@@ -6,7 +6,7 @@ function Logout () {
 
     const handleClick = async () => {
         // Delete refresh and access cookies.
-        await axios.get('/api/auth/logout');
+        await axios.get('/api/auth/refresh/logout', { withCredentials: true });
         setStatus("unauthenticated");
     }
     

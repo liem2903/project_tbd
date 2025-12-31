@@ -2,9 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
 import { checkRefreshToken, getRefreshToken, getGoogleDataAccess, refreshAccessToken } from "../data_access/authRepository.js";
 dotenv.config();
-
 import {redis} from '../redis.js';
-
 export function authMiddleware(req, res, next) {
     const token = req.cookies.access_token;
     
@@ -17,10 +15,8 @@ export function authMiddleware(req, res, next) {
         next();
     } catch (err) {
         if (err.name == "TokenExpiredError") {
-            console.log("HELLO YOU GO IN HERE");
             return res.status(401).json({error: 'Expired token'});
         } else {
-            console.log("HELLO YOU GO IN HERE NOW");
             return res.status(401).json({error: 'Invalid token'});
         }
     }
@@ -39,22 +35,25 @@ export async function refreshMiddleware(req, res, next) {
         return res.status(401).json({error: "Invalid refresh token"});
     }
     
-    req.userId = userId;             
+    req.userId = userId;       
     next();
 }
 // Just generate an access token and put it in res.  
 export async function googleAuthMiddleware(req, res, next) {
     const user_id = req.user.user_id;
-    const { expiry_time } = await redis.get(`google:access:${user_id}`);
+    const { expiry_time, time_zone } = await redis.get(`google:access:${user_id}`);
 
     if (Date.now() > expiry_time) {
         const refresh_token = await getRefreshToken(user_id);
-        const { access_token, expiry_time } = await refreshAccessToken(refresh_token);
-        await redis.set(`google:access:${user_id}`, { access_token, expiry_time }, {ex: 60 * 60})
+        const { access_token, expires_in } = await refreshAccessToken(refresh_token);
+        const expiry_time = Date.now() + expires_in * 1000;
+
+        await redis.set(`google:access:${user_id}`, { access_token, expiry_time, time_zone }, {ex: 60 * 60})
     } 
 
     const { access_token } = await redis.get(`google:access:${user_id}`);
     req.access_token = access_token;
+    req.time_zone = time_zone;
     next();
 }
 // To do - check user first and then do the refresh stuff.

@@ -9,7 +9,8 @@ import {
      createAccessTokenBusiness,     
      rotateRefreshToken,
      logoutBusiness,
-     getCalenderBusiness
+     getCalenderBusiness,
+     getTimezoneBusiness
     } from "../business/authBusiness.js";
 import dotenv from 'dotenv';
 dotenv.config();
@@ -19,7 +20,7 @@ import { redis } from "../redis.js";
 export async function getGoogleDetails(req, res) {
     try {
         const { code } = req.query;
-       
+
         if (!code) {
             return res.status(400).json({error: "Missing code"});
         }
@@ -28,9 +29,9 @@ export async function getGoogleDetails(req, res) {
         const { id, email, name } = await getGoogleData(access_token);
        
         let user = await getUser(id);
-        
+        let time_zone  = await getTimezoneBusiness(access_token);        
         let expiry_time = Date.now() + expires_in * 1000;
-        redis.set(`google:access:${user.id}`, {access_token, expiry_time}, {ex: 60 * 60 });
+        redis.set(`google:access:${user.id}`, {access_token, expiry_time, time_zone}, {ex: 60 * 60 });
 
         if (!user) {
             const user = await createUser(id, email, name);
@@ -92,8 +93,7 @@ export async function createAccessToken(req, res) {
 
 export async function refresh(req, res) {
     try {
-        let user_id = req.userId;
-        
+        let user_id = req.userId;        
         const refresh_token = await createRefreshTokenLogic();
         await rotateRefreshToken(refresh_token.code, user_id, refresh_token.expiresAt);
 
@@ -132,8 +132,8 @@ export async function checkUser(req, res) {
 
 export async function logout(req, res) {
     try {
-        let user_id = req.user.user_id;
-        await logoutBusiness(user_id);
+        let refresh_token = req.cookies.refresh_token
+        await logoutBusiness(refresh_token);
 
         res.clearCookie("access_token", {
             httpOnly: true,
@@ -156,10 +156,9 @@ export async function logout(req, res) {
 export async function getCalender(req, res) {
     try {
         let access_token = req.access_token;
-
-        await getCalenderBusiness(access_token);
-
-        return res.status(200).json({success: true, data: calender})
+        let time_zone = req.time_zone;
+        let calendar = await getCalenderBusiness(access_token, time_zone);
+        return res.status(200).json({success: true, data: calendar.items})
     } catch (err) {
         return res.status(400).json({success: false})
     }

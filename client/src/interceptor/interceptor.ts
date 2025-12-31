@@ -14,7 +14,6 @@ api.interceptors.response.use(
             return Promise.reject(error);
         }
 
-
         if (original_request._retry) {
             return Promise.reject(error);
         }
