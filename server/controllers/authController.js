@@ -97,7 +97,7 @@ export async function refresh(req, res) {
         let user_id = req.userId;        
         const refresh_token = await createRefreshTokenLogic();
         await rotateRefreshToken(refresh_token.code, user_id, refresh_token.expiresAt);
-
+ 
         res.cookie("refresh_token", refresh_token.code, {
             httpOnly: true,
             secure: false,
@@ -116,6 +116,7 @@ export async function refresh(req, res) {
             maxAge: 30 * 24 * 60 * 60 * 1000
         })
         
+        console.log("YEAH I MADE ACCESS TOKEN AGAIN IT SHOULD BE GOOD TO GO");
         res.status(200).json({success: true});
     } catch (err) {
         console.log(err.message);
@@ -168,8 +169,9 @@ export async function getCalender(req, res) {
 export async function createEvent(req, res) {
     try {
         let access_token = req.access_token;
+        let time_zone = req.time_zone;
         let { value: eventText } = req.body;
-        createEventBusiness(access_token, eventText);
+        createEventBusiness(access_token, eventText, time_zone);
         return res.status(200).json({success: true});
 
     } catch (err) {

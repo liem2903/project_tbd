@@ -5,6 +5,8 @@ dotenv.config();
 import {redis} from '../redis.js';
 export function authMiddleware(req, res, next) {
     const token = req.cookies.access_token;
+
+    console.log(`check this out ${token}`);
     
     if (!token) {
         return res.status(401).json({error: 'Not authenticated'});
@@ -24,6 +26,7 @@ export function authMiddleware(req, res, next) {
 
 export async function refreshMiddleware(req, res, next) {
     const token = req.cookies.refresh_token;
+    console.log(token);
 
     if (!token) {       
         return res.status(401).json({error: "Log out"});
@@ -35,7 +38,7 @@ export async function refreshMiddleware(req, res, next) {
         return res.status(401).json({error: "Invalid refresh token"});
     }
     
-    req.userId = userId;       
+    req.userId = userId;     
     next();
 }
 // Just generate an access token and put it in res.  

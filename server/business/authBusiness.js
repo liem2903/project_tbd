@@ -97,25 +97,32 @@ export async function getTimezoneBusiness(access_token) {
     }
 }
 
-export async function createEventBusiness(access_token, prompt) {
+export async function createEventBusiness(access_token, prompt, time_zone) {
     try {
         const tmrRegex = /(tmr+|tomorrow+|tomorow+|tmrw|2mr)/i
+        let time_start = DateTime.now().setZone(time_zone);
+        let time_end = DateTime.now().setZone(time_zone).plus({hours: 1})
         // Add time regex - make it so that it's good.
-        const timeRegex = /^((0?[1-9]|1[0-2])(:)?[0-5][0-9](pm|am)?-(0?[1-9]|1[0-2])(:)?[0-5][0-9](pm|am))$/i
+        const timeStartRegex = /((0?[1-9]|1[0-2])(:?[0-5][0-9])?(pm|am)?(-)?)/i
         const tomorrow = prompt.toLowerCase().trim().match(tmrRegex);
         const timeStart = prompt.trim().match(timeStartRegex);
+        
+        if (timeStart) { 
+            const hours = timeStart[0].match(/^(0?[1-9]|1[0-2])$/)
+            console.log(hours);
+        }
 
-        console.log(timeStart[0]);
 
         // If tomorrow is true then add one to both start day and end day.
         if (tomorrow) {
-            prompt = prompt.toLowerCase().replace(tmrRegex, "").trim();
+            time_start = time_start.plus({days: 1});
+            time_end = time_end.plus({days: 1});
+            prompt = prompt.toLowerCase().replace(tmrRegex, "").trim().replace("  ", " ");
         }
-
-        // Getting date and time as well.
-
+        
         console.log(prompt);
- 
+
+        // Getting date and time as well. 
         return 
         createEventData(access_token, prompt);
     } catch (err) {

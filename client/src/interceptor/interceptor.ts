@@ -22,6 +22,7 @@ api.interceptors.response.use(
 
         try {
             await axios.get('/api/auth/refresh', { withCredentials: true });
+            return api(original_request);
         } catch (err) {
             return Promise.reject(error)
         }
