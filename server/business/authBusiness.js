@@ -176,13 +176,13 @@ export async function createEventBusiness(access_token, prompt, time_zone) {
                 }
             }
             // If I see that time end has a pm I add 12 hours to it unless its a 12.
-            if (timeStart[6] == "pm" && parseInt(hourEnd) != 12) {
-                hourEnd = setMeredian(parseInt(hourEnd)).toString();
-                
-                // If time start doens't have any meredian and it's not equal to 12 I add 12
-                if (!timeStart[3] && parseInt(hourStart) != 12) {
+            if (timeStart[6] == "pm" && hourEnd != "12") {
+                if (!timeStart[3] && parseInt(hourStart) + parseInt(minStart) < parseInt(hourEnd) + parseInt(minEnd)) {
                     hourStart = (setMeredian(parseInt(hourStart))).toString();
                 }
+
+                hourEnd = setMeredian(parseInt(hourEnd)).toString();
+                // If time start doens't have any meredian and it's not equal to 12 I add 12
             }
 
             prompt = prompt.toLowerCase().replace(timeRegex, "").trim().replace("  ", " ");
@@ -205,7 +205,6 @@ export async function createEventBusiness(access_token, prompt, time_zone) {
         } else {
             // No time means I just make it a whole day thing.
             let date = `${year}-${month}-${day}`;
-            console.log(date);
             let start = DateTime.fromISO(date).toISODate();
             let end = DateTime.fromISO(date).plus({days: 1}).toISODate(); 
 
