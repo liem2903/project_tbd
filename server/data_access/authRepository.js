@@ -49,16 +49,20 @@ export async function getUserData(google_id) {
             `SELECT id FROM users WHERE google_id = $1`, [google_id]
         );
 
-        return rows[0] ?? null;           
+        if (rows.length == 0) {
+            return null;
+        }
+
+        return rows[0];     
     } catch (err) {
         console.log(err.message);
     }
 }
 
-export async function createUserData(google_id, email, name) {
+export async function createUserData(google_id, email, name, friend_code) {
     try {
         const result = await pool.query(
-            `INSERT INTO public.users (google_id, email, name) VALUES ($1, $2, $3) RETURNING id`, [google_id, email, name]
+            `INSERT INTO public.users (google_id, email, name, friend_code) VALUES ($1, $2, $3, $4) RETURNING id`, [google_id, email, name, friend_code]
         );
 
         return result.rows[0];

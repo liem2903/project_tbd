@@ -28,15 +28,15 @@ export async function getGoogleDetails(req, res) {
 
         const { access_token, expires_in, refresh_token } = await getGoogleToken(code);
         const { id, email, name } = await getGoogleData(access_token);
-       
         let user = await getUser(id);
+
+        if (!user) {
+            user = await createUser(id, email, name);
+        }      
+        
         let time_zone  = await getTimezoneBusiness(access_token);        
         let expiry_time = Date.now() + expires_in * 1000;
         redis.set(`google:access:${user.id}`, {access_token, expiry_time, time_zone});
-
-        if (!user) {
-            const user = await createUser(id, email, name);
-        }      
         
         if (refresh_token) {
             await storeRefreshGoogle(user.id, refresh_token);

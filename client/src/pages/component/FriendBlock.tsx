@@ -1,4 +1,3 @@
-import { useState } from 'react';
 // Changes colour based on how long ago.
 
 // 1- 1 week --> GREEN

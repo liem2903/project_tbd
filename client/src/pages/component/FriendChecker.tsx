@@ -9,6 +9,7 @@ function FriendChecker() {
                 <FriendBlock name={"Joyce He"} last_seen={"10 days ago"}/>
                 <FriendBlock name={"Melody Young"} last_seen={"2 days ago"}/>
                 <FriendBlock name={"Emma Nguyen"} last_seen={"12 days ago"}/>
+                <FriendBlock name={"Benjamin Liu"} last_seen={"12 days ago"}/>
             </div>
         </div>
     </>

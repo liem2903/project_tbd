@@ -2,7 +2,12 @@ import { useState } from 'react';
 import SearchBar from './component/SearchBar';
 import { api } from '../interceptor/interceptor';
 
-function Events() {
+type prop = {
+    reload: boolean,
+    setReload: React.Dispatch<React.SetStateAction<boolean>> 
+}
+
+function Events({reload, setReload}: prop) {
     const [ value, setValue ] = useState("");
     const [ clicked, clickButton ] = useState(false);
 
@@ -13,8 +18,13 @@ function Events() {
         }
 
         await api.post('/auth/create-event', {value});
+        setTimeout(endActions, 2000);
+    }
+
+    const endActions = () => {
         setValue("");
         clickButton(false);
+        setReload(!reload);
     }
 
     return (

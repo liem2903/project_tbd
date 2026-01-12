@@ -31,7 +31,8 @@ export async function getUser(google_id) {
 }
 
 export async function createUser(id, email, name) {
-    return createUserData(id, email, name)
+    let friend_code = crypto.randomBytes(6).toString("base64url").toUpperCase();
+    return createUserData(id, email, name, friend_code)
 }
 
 export async function storeRefreshGoogle(user_id, google_token) {
