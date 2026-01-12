@@ -11,7 +11,7 @@ type Event = {
     timeStart: string,
     duration: string
 }
-
+// Fix the view point issues. Consistent across - learn about this. 
 function Home () {
     const [ events, setEvents ] = useState<Event[]>([]);
     const [ loading, setLoad ] = useState(false);
@@ -51,11 +51,11 @@ function Home () {
                     <Events reload={reload} setReload={setReload}/>
                     {
                         loading == true ? <Spinner/> : events.length == 0 ?
-                            <div className="w-full text-violet-400 font-bold h-160 flex justify-center items-center text-2xl">
+                            <div className="w-[78vw] text-violet-400 font-bold h-[65vh] flex justify-center items-center text-2xl">
                             No events on today 
                             </div> : 
-                            <div className="flex flex-col w-fit"> 
-                                <div className="content-start grid grid-cols-2 w-300 min-h-140 pl-20 mt-12 gap-x-10 gap-y-2 bg-[#F1EDFF] border-4 border-violet-200 ml-19 pt-5 overflow-y-scroll no-scrollbar">
+                            <div className="flex flex-col"> 
+                                <div className="content-start grid grid-cols-2 w-[78vw] h-[65vh] pl-20 mt-12 gap-x-10 gap-y-2 bg-[#F1EDFF] border-4 border-violet-200 ml-19 pt-5 overflow-y-scroll no-scrollbar">
                                 {events.map((e, index) => (<div className={index % 2 ? "mt-10" : ""}> <Event startTime={e.timeStart.toLowerCase()} action={e.eventName} duration={e.duration} day="Today"/> 
                                 </div>))} 
                                 </div>

@@ -6,7 +6,7 @@ import RequestsButton from "./RequestsButton";
 function FriendChecker() {
     return <>
         <div className="flex-1 flex justify-center">
-            <div className="border-2 border-violet-200 w-1/2 mt-10 bg-[#F1EDFF] overflow-y-scroll no-scrollbar shadow h-180 flex flex-col gap-5 pt-3"> 
+            <div className="border-2 border-violet-200 w-4/5 mt-10 bg-[#F1EDFF] overflow-y-scroll no-scrollbar shadow h-[80vh] flex flex-col gap-5 pt-3"> 
                 <div className="flex">
                     <div className="flex justify-end font-bold underline w-3/5"> 
                         Friends 

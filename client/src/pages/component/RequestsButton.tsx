@@ -29,7 +29,7 @@ function RequestsButton () {
 
 
     return <>
-        <div className="border-2 rounded-full w-6 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50">
+        <div className="border-2 rounded-full w-1/4 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50">
             <Inbox size="15"/> 
         </div>
     </>
