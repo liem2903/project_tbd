@@ -31,7 +31,7 @@ function Events({reload, setReload}: prop) {
         <div className="flex items-center ml-20 mt-10">
             <div className="relative flex justify-center items-center">
                 <SearchBar query={value} setQuery={setValue}></SearchBar>
-                <button className="rounded-2xl bg-violet-200 h-9 w-20 absolute right-8 text-white hover:font-bold border-violet-500 hover:cursor-grab hover:shadow" disabled={clicked} onClick={() => {clickButton(true); handleClick()}}> Enter </button>
+                <button className="rounded-2xl bg-violet-200 h-9 w-20 absolute right-8 text-white hover:font-bold border-violet-500 hover:cursor-pointer hover:shadow" disabled={clicked} onClick={() => {clickButton(true); handleClick()}}> Enter </button>
             </div>
         </div>
     ) 
