@@ -5,10 +5,10 @@ import { useState } from 'react';
 function RequestsButton () { 
     const [ popUp, setPopup ] = useState(false)
 
-
     return <>
-        <div className="border-2 rounded-full w-1/4 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50">
+        <div className="border-2 rounded-full w-1/4 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50 relative" onMouseEnter={() => setPopup(true)} onMouseLeave={() => setPopup(false)}>
             <Inbox size="15"/> 
+            {popUp && <div className="absolute top-6"> <div className="border-4 w-[10vw] h-[5vh]"> </div> </div>}
         </div>      
     </>
 }
