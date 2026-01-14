@@ -46,7 +46,7 @@ function Home () {
 
     return (
         <>  
-            <div className="flex">
+            <div className="flex bg-black">
                 <div className="flex flex-col w-fit"> 
                     <Events reload={reload} setReload={setReload}/>
                     {
