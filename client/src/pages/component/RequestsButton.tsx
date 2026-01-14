@@ -4,11 +4,12 @@ import { useState } from 'react';
 // I want to be able to hover over my button and then my requests will pop up. I can accept and decline requests accordingly - but once my mouse LEAVES the div then the pop up disappears. No overlap.
 function RequestsButton () { 
     const [ popUp, setPopup ] = useState(false)
+    const [ notif, notify ] = useState(false)
 
     return <>
-        <div className="border-2 rounded-full w-1/4 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50 relative" onMouseEnter={() => setPopup(true)} onMouseLeave={() => setPopup(false)}>
+        <div className="border-2 rounded-full w-1/4 border-violet-300 flex justify-center items-center hover:cursor-pointer hover:bg-amber-50 relative bg-amber-50" onMouseEnter={() => setPopup(true)} onMouseLeave={() => setPopup(false)}>
             <Inbox size="15"/> 
-            {popUp && <div className="absolute top-6"> <div className="border-4 w-[10vw] h-[5vh]"> </div> </div>}
+            {popUp && <div className="absolute top-[1.25vw] w-[10.5vw] overflow-scroll no-scrollbar right-1 bg-violet-200 border-4 border-violet-300 h-[20vh]"> <div className=""> </div> </div>}
         </div>      
     </>
 }
