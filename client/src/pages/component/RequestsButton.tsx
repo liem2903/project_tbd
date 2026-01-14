@@ -15,3 +15,8 @@ function RequestsButton () {
 }
 
 export default RequestsButton;
+
+// Today's session: 
+// Create request - what it looks like.
+// Connect the connection to getRequests. 
+// Add notification --> how many notifications --> little curved div that pops up on the icon when request > 1 --> I would like it to disappear when I decline or accept the offer. Probs should say "NO REQUESTS HERE ADD FRIENDS"
