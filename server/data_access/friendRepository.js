@@ -47,8 +47,8 @@ export async function deleteFriendRequestData(id) {
 
 export async function createFriend(friend_id, id) {
     try {
-        await pool.query(`INSERT INTO public.friend_requests (user_id, friend_id) VALUE ($1, $2)`, [id, friend_id]);
+        await pool.query(`INSERT INTO public.friendships (user_id, friend_id) VALUES ($1, $2)`, [id, friend_id]);
     } catch (err) {
-        console.log(err.message());
+        console.log(err);
     }
 }

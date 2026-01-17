@@ -157,8 +157,6 @@ export async function refreshAccessToken(refresh_token) {
 
         const data = await res.json();
 
-        console.log(data);
-
         return {
             access_token: data.access_token,
             expires_in: data.expires_in

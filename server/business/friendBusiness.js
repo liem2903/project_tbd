@@ -27,7 +27,7 @@ export function setFriendRequestBusiness(status, id, friend, current_user) {
 
         setFriendRequestData(status, id);
 
-        if (status == "Accept") {
+        if (status == "Accepted") {
             createFriend(friend, current_user);
         }
     } catch (err) {
