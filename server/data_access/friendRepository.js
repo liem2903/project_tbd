@@ -12,11 +12,20 @@ export async function getFriendsData(user_id) {
     }
 }
 
-export async function postFriendRequestData(user_id, send_id) {
+export async function postFriendRequestData(user_id, code) {
     try {
-        pool.query('INSERT INTO public.friend_requests (user_id, friend_id) VALUES ($1, $2)', [user_id, send_id]);
+        console.log(code);
+        console.log(user_id);
+        
+        const result = await pool.query('INSERT INTO public.friend_requests (from_user, status, to_user) SELECT $1, $2, id FROM public.users WHERE friend_code = $3 and id <> $1', [user_id, "Pending", code]);
+
+        if (result.rowCount === 0) {
+            return new Error("Code not valid");
+        }
+
+        console.log(result);
     } catch (err) {
-        console.log(err.message());
+        console.log(err.message);
     }
 }
 

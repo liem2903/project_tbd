@@ -23,11 +23,11 @@ export async function getFriendsBusiness(user_id) {
     }
 }
 
-export function postFriendRequestBusiness(user_id, send_id) {
+export function postFriendRequestBusiness(user_id, code) {
     try {
-        return postFriendRequestData(user_id, send_id);
+        return postFriendRequestData(user_id, code);
     } catch (err) {
-        throw new Error("Error in data-base");
+        throw new Error("Not a valid code");
     }
 }
 

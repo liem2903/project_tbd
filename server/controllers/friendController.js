@@ -24,10 +24,10 @@ export async function getFriendRequests(req, res) {
 
 export async function postFriendRequest(req, res) {
     try {
-        let user_id = req.userId;
-        let { send_id } = req.body;
+        let user_id = req.user.user_id;
+        let { code } = req.body;
 
-        postFriendRequestBusiness(user_id, send_id);
+        postFriendRequestBusiness(user_id, code);
         res.status(200).json({status: true})
     } catch (err) {
         res.status(400).json({status: false})
