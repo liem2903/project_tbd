@@ -31,14 +31,16 @@ export async function postFriendRequestBusiness(user_id, code) {
     return postFriendRequestData(user_id, code);
 }
 
-export function setFriendRequestBusiness(status, id, friend, current_user) {
+export async function setFriendRequestBusiness(status, id, friend, current_user) {
     try {
-
         setFriendRequestData(status, id);
 
         if (status == "Accepted") {
-            createFriend(friend, current_user);
-            createFriend(current_user, friend)
+            let friend_name = await getUserName(friend); 
+            let user_name = await getUserName(id);
+
+            createFriend(friend, current_user, friend_name);
+            createFriend(current_user, friend, user_name)
         }
     } catch (err) {
         throw new Error("Error in data-base");

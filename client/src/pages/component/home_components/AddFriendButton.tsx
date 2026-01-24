@@ -1,12 +1,26 @@
 import { UserPlus } from 'lucide-react';
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
 import { api } from '../../../interceptor/interceptor';
+import Spinner from '../global_components/Spinner';
 
 function AddFriendButton() {
     const [ popup, setPopup ] = useState(false);
     const [ friendCode, typeFriendCode ] = useState("");
     const [ error, setError ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState("");
+    const [ ownFriendCode, getFriendCode ] = useState("");
+    const [ loading, setLoading ] = useState(false);
+
+    useEffect(() => {
+        const getUserFriendCode = async () => {
+            setLoading(true);
+            let code = await api.get(`user/get-friend-code`, {withCredentials: true});
+            getFriendCode(code.data.data.friend_code);
+            setLoading(false);
+        }
+
+        getUserFriendCode();
+    }, [])
 
     const handleKeyDown = async (e: any) => {
         if (e.key === "Enter") {
@@ -29,23 +43,28 @@ function AddFriendButton() {
                 <UserPlus size="15"/>
 
                 {popup && 
-                <div className="absolute top-[1vh] w-[13.5vw] overflow-scroll z-100 no-scrollbar right-1 bg-[#F1EDFF] h-[30vh] pt-[1vh] flex-col flex items-center">
-                    <div className='flex justify-evenly items-center w-7/8'> <div className= 'h-[0.25vh] border-[0.1vh] w-[2vw]'> </div> <div className='text-black font-bold'> Add Friend </div>  <div className='h-[0.25vh] border-[0.1vh] w-[2vw]'> </div> </div>
-                    <div className='bg-violet-300 w-7/8 border-[0.1vh] border-violet-500 rounded-sm h-[13vh] flex text-center pt-[2vh] flex-col shadow-xs'> 
-                        <div className='text-xs text-violet-50'> To add someone to your friend list enter their friend code below </div>
-                        <div className="w-full justify-center pt-[1vh] h-1/2"> <input type="search" placeholder="0A0C D2E3" className='w-7/8 h-full border-2 border-violet-500 text-center focus:outline-0' value={friendCode} onClick={() => {setError(false); setErrorMessage("")}} onChange={(e) => typeFriendCode(e.target.value)} onKeyDown={handleKeyDown}/> </div>
-                        {error && <div className='text-red-500 font-extrabold text-[0.65vw] underline'> {errorMessage} </div>}
-                    </div>
+                <div className="absolute top-[1vh] w-[13.5vw] overflow-scroll z-100 no-scrollbar right-[0.25vw] bg-[#F1EDFF] h-[30vh] pt-[1vh] flex-col flex items-center">
+                    {loading ? <Spinner/> : 
+                        <>
+                            <div className='flex justify-evenly items-center w-7/8'> <div className= 'h-[0.25vh] border-[0.1vh] w-[2vw]'> </div> <div className='text-black font-bold'> Add Friend </div>  <div className='h-[0.25vh] border-[0.1vh] w-[2vw]'> </div> </div>
+                            <div className='bg-violet-300 w-7/8 border-[0.1vh] border-violet-500 rounded-sm h-[13vh] flex text-center pt-[2vh] flex-col shadow-xs'> 
+                                <div className='text-xs text-violet-50'> To add someone to your friend list enter their friend code below </div>
+                                <div className="w-full justify-center pt-[1vh] h-1/2"> <input type="search" placeholder="0A0C D2E3" className='w-7/8 h-full border-2 border-violet-500 text-center focus:outline-0' value={friendCode} onClick={() => {setError(false); setErrorMessage("")}} onChange={(e) => typeFriendCode(e.target.value)} onKeyDown={handleKeyDown}/> </div>
+                                {error && <div className='text-red-500 font-extrabold text-[0.65vw] underline'> {errorMessage} </div>}
+                            </div>
+                            
+                            <div className='flex justify-evenly items-center w-7/8 mt-[1vh]'> <div className='h-[0.25vh] border-[0.1vh] w-[1.28vw]'> </div> <div className='text-black font-bold'> My Friend Code </div>  <div className='h-[0.25vh] border-[0.1vh] w-[1.28vw]'> </div> </div>
+                            <div className='bg-violet-300 w-7/8 border-[0.1vh] border-violet-500 rounded-sm h-[7vh] shadow-xs'> 
+                                <div className="text-xs pl-[1vw] pt-[0.5vh]"> 
+                                    Friend Code: 
+                                </div> 
+                                <div>
+                                    <div className='pl-[1vw] text-2xl text-violet-50'> {ownFriendCode} </div>
+                                </div>
+                            </div>
+                        </>
+                    }
                     
-                    <div className='flex justify-evenly items-center w-7/8 mt-[1vh]'> <div className='h-[0.25vh] border-[0.1vh] w-[1.28vw]'> </div> <div className='text-black font-bold'> My Friend Code </div>  <div className='h-[0.25vh] border-[0.1vh] w-[1.28vw]'> </div> </div>
-                    <div className='bg-violet-300 w-7/8 border-[0.1vh] border-violet-500 rounded-sm h-[7vh] shadow-xs'> 
-                        <div className="text-xs pl-[1vw] pt-[0.5vh]"> 
-                            Friend Code: 
-                        </div> 
-                        <div>
-                            <div className='pl-[1vw] text-2xl text-violet-50'> 0000 0000 </div>
-                        </div>
-                    </div>
                 </div>
                 }
             </div>

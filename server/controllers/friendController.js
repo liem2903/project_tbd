@@ -46,7 +46,6 @@ export async function declineFriendRequest(req, res) {
 
 export async function acceptFriendRequest(req, res) {
     try {
-        // Creating one didn't work. Fix this tmr.
         let { id, from_user } = req.body;
         let current_user = req.user.user_id;
         setFriendRequestBusiness("Accepted", id, from_user, current_user);

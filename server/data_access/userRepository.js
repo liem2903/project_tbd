@@ -10,3 +10,16 @@ export async function getUserName(user_id) {
         console.log(err.message()) 
     }
 }
+
+export async function getFriendCodeRepository(user_id) {
+    try {
+        const code = await pool.query(`SELECT friend_code FROM public.users WHERE users.id = $1`, [user_id]);
+        console.log(code.rows[0]);
+        
+        return code.rows[0];
+    } catch (err) {
+        console.log(err.response?.status);
+        console.log(err.response?.data); 
+        console.log(err.message);
+    }
+}

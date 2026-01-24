@@ -1,6 +1,7 @@
 import express from 'express';
 import auth from './routes/auth.js';
 import friend from './routes/friend.js';
+import user from './routes/user.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser'; 
 dotenv.config();
@@ -12,6 +13,6 @@ app.use(cookieParser());
 
 app.use('/api/auth', auth);
 app.use('/api/friend', friend);
-
+app.use('/api/user', user);
 app.listen(port, () => console.log("Server started on port 4000"))
 export default app;

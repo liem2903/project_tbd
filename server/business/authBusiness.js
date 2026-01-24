@@ -207,6 +207,15 @@ export async function createEventBusiness(access_token, prompt, time_zone) {
     }
 }
 
+export function getFriendCodeBusiness(user_id) {
+    try {
+        console.log("IT WORKS");
+        return getFriendCodeRepository(user_id);
+    } catch (err) {
+        throw new Error(err.message);
+    }
+}
+
 function setMeredian(time) {
     return time + 12; 
 }

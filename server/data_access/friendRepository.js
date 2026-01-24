@@ -52,9 +52,9 @@ export async function deleteFriendRequestData(id) {
     }
 }
 
-export async function createFriend(friend_id, id) {
+export async function createFriend(friend_id, id, friend_name) {
     try {
-        await pool.query(`INSERT INTO public.friendships (user_id, friend_id) VALUES ($1, $2)`, [id, friend_id]);
+        await pool.query(`INSERT INTO public.friendships (user_id, friend_id, friend_name) VALUES ($1, $2, $3)`, [id, friend_id, friend_name]);
     } catch (err) {
         console.log(err);
     }
