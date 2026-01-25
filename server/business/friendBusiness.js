@@ -1,5 +1,5 @@
 
-import { getFriendsData, postFriendRequestData, setFriendRequestData, getFriendRequestsData, deleteFriendRequestData, createFriend, isFriendedData } from '../data_access/friendRepository.js'
+import { getFriendsData, postFriendRequestData, setFriendRequestData, getFriendRequestsData, createFriend, isFriendedData, changeFriendNameRepository, getChangedUserName, checkUniqueName } from '../data_access/friendRepository.js'
 import { getUserName } from '../data_access/userRepository.js';
 
 export async function getFriendsBusiness(user_id) {
@@ -8,10 +8,12 @@ export async function getFriendsBusiness(user_id) {
 
         const friendNames = await Promise.all(id.map(async (user) => {
             let friends = await getUserName(user.friend_id);
+            let change_friend_name = await getChangedUserName(user_id, user.friend_id);
 
             return {
                 name: friends.name,
                 id: user.friend_id,
+                changed_name: change_friend_name,
             }
         }));
 
@@ -66,4 +68,12 @@ export async function getFriendRequestsBusiness(user_id) {
     } catch (err) {
         throw new Error("Error in data-base");
     }
+}
+
+export async function changeFriendNameBusiness(user_id, id, name) {
+    if (!(await checkUniqueName(user_id, name.trim().toLowerCase()))) {  
+        throw new Error("A friend already has this name");
+    }
+
+    return changeFriendNameRepository(user_id, id, name.trim().toLowerCase());
 }

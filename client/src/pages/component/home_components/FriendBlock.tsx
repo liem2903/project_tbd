@@ -1,24 +1,37 @@
 // Changes colour based on how long ago.
 import { useState } from 'react';
 import FlipButton from './FlipButton';
+import { api } from '../../../interceptor/interceptor';
 
 type prop = {
     name: string,
-    last_seen: string
+    last_seen: string,
+    id: string,
+    changed_name: string,
 }
 
-function FriendBlock({name, last_seen}: prop) {
+function FriendBlock({name, last_seen, id, changed_name}: prop) {
     const [ flipped, flipOver ] = useState(false);
     const [ newName, setNewName] = useState("");
+    const [ placeHolderName, setPlaceholderName ] = useState(changed_name);
+    const [ successfulChange, showSuccessfulChange ] = useState(false);
+    const [ errorMessage, setErrorMessage ] = useState("");
+    const [ successMessage, setSuccessMessage ] = useState("");
 
-    const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>, id: string) => {
         if (e.key === "Enter") {
             e.preventDefault();
 
             try {
-                // await setNewName()
+                await api.patch('friend/change-friend-name', {id: id, name: newName}, {withCredentials: true});
+                setPlaceholderName(newName);
+                setNewName("");
+                setErrorMessage("");
+                showSuccessfulChange(true);
+                setSuccessMessage("Successfully changed name");
             } catch (err: any) {
-                console.log(err.message);
+                setErrorMessage(err.response.data.error);
+                showSuccessfulChange(false);
             }
         }
     }
@@ -46,8 +59,9 @@ function FriendBlock({name, last_seen}: prop) {
                             <div className="mt-[0.5vh] text-shadow-2xs"> 
                                 Change name: 
                             </div>
-                            <div> 
-                                <input type="text" placeholder={name} value={newName} onChange={(e) => {setNewName(e.target.value)}} onKeyDown={(e) => handleEnter(e)} className='w-[9vw] border-2 mt-[0.5vh] text-center'/> 
+                            <div className='flex flex-col justify-center items-center'> 
+                                <input type="text" placeholder={placeHolderName} value={newName} onClick={() => {showSuccessfulChange(false); setErrorMessage(""); setSuccessMessage("")}} onChange={(e) => {setNewName(e.target.value)}} onKeyDown={(e) => handleEnter(e, id)} className={[['w-[9vw] border-2 mt-[0.5vh] text-center, focus:outline-0', successfulChange ? "border-green-500" : ""].join(" "), errorMessage.length > 0 ? "border-red-500" : ""].join(" ")}/> 
+                                <div className={['text-center font-bold text-xs pt-[0.5vh]', successfulChange ? "text-green-500" : "text-red-500"].join(" ")}> {successfulChange ? successMessage : errorMessage} </div>
                             </div>
                         </div>
                     </div>

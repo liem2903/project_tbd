@@ -1,6 +1,6 @@
 import express from 'express'
 import { authMiddleware, googleAuthMiddleware } from '../middleware/middleware.js';
-import { getFriends, postFriendRequest, declineFriendRequest, acceptFriendRequest, getFriendRequests } from '../controllers/friendController.js';
+import { getFriends, postFriendRequest, declineFriendRequest, acceptFriendRequest, getFriendRequests, changeFriendName} from '../controllers/friendController.js';
 const router = express.Router()
 
 router.get('/get-friends', authMiddleware, getFriends);
@@ -14,5 +14,6 @@ router.post('/post-friend-request', authMiddleware, postFriendRequest);
 router.patch('/decline-friend-request', authMiddleware, declineFriendRequest);
 // Accept Friend Request
 router.patch('/accept-friend-request', authMiddleware, acceptFriendRequest);
+router.patch('/change-friend-name', authMiddleware, changeFriendName);
 
 export default router;

@@ -9,4 +9,5 @@ export type friendRequest = {
 export type friends = {
     name: string,
     id: string,
+    changed_name: string,
 }

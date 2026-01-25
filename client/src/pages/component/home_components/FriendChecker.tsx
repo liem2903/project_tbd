@@ -21,6 +21,8 @@ function FriendChecker() {
             
             data.map(req => friendRequests.push(req));
             setFriendRequests(friendRequests);
+
+            console.log(friendRequests);
         }
 
         const getFriends = async () => {
@@ -48,7 +50,7 @@ function FriendChecker() {
                     </div>
                 }
 
-                {loading ? <div></div> : friendlist.map((val) =>  <FriendBlock name={val.name} last_seen={"10 days ago"}/>)}
+                {loading ? <div></div> : friendlist.map((val) =>  <FriendBlock name={val.name} last_seen={"10 days ago"} id={val.id} changed_name={val.changed_name}/>)}
             </div>
         </div>
     </>

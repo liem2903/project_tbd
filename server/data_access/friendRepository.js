@@ -30,7 +30,7 @@ export async function setFriendRequestData(status, id) {
     try {
         pool.query(`UPDATE public.friend_requests SET status = $1 WHERE id = $2`, [status, id]);
     } catch (err) {
-        console.log(err.message());
+        console.log(err.message);
     }
 }
 
@@ -40,7 +40,7 @@ export async function getFriendRequestsData(user_id) {
 
         return data.rows;
     } catch (err) {
-        console.log(err.message());
+        console.log(err.message);
     }
 }
 
@@ -83,5 +83,39 @@ export async function isFriendedData(user_id, code) {
         }
     } catch (err) {
         console.log(err.message);
+    }
+}
+
+export async function getChangedUserName(user_id, friend_id) {
+    try {
+        let data = await pool.query(`SELECT friend_name FROM friendships WHERE user_id = $1 AND friend_id = $2`, [user_id, friend_id]);
+        return data.rows[0].friend_name;
+    } catch (err) {
+        console.log(err.status);
+        console.log(err.message);
+    }
+}
+
+export async function changeFriendNameRepository(user_id, id, name) {
+    try {
+        await pool.query(`UPDATE public.friendships SET friend_name = $1 WHERE user_id = $2 AND friend_id = $3`, [name, user_id, id]);
+    } catch (err) {
+        console.log(err.message);
+        console.log(err.status);
+    }
+}
+
+export async function checkUniqueName(user_id, name) {
+    try {
+        const data = await pool.query(`SELECT * FROM public.friendships WHERE friend_name = $1 AND user_id = $2`, [name, user_id]);
+        
+        if (data.rowCount > 0) {
+            return false;
+        }
+        
+        return true;
+    } catch (err) {
+        console.log(err.message);
+        console.log(err.status);
     }
 }
