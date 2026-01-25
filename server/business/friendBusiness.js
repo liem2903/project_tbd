@@ -37,13 +37,13 @@ export async function setFriendRequestBusiness(status, id, friend, current_user)
 
         if (status == "Accepted") {
             let friend_name = await getUserName(friend); 
-            let user_name = await getUserName(id);
+            let user_name = await getUserName(current_user);
 
-            createFriend(friend, current_user, friend_name);
-            createFriend(current_user, friend, user_name)
+            createFriend(friend, current_user, friend_name.name);
+            createFriend(current_user, friend, user_name.name)
         }
     } catch (err) {
-        throw new Error("Error in data-base");
+        console.log("ERROR IN DATABASE");
     }
 }
 

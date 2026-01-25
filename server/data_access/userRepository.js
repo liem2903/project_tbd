@@ -7,7 +7,9 @@ export async function getUserName(user_id) {
         let data = await pool.query(`SELECT name FROM public.users WHERE id = $1`, [user_id]);
         return data.rows[0];
     } catch (err) {
-        console.log(err.message()) 
+        console.log(err.response?.status);
+        console.log(err.response?.data); 
+        console.log(err.message); 
     }
 }
 
