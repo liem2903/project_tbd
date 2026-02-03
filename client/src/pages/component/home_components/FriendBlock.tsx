@@ -22,18 +22,39 @@ function FriendBlock({last_seen, id, changed_name, status}: prop) {
     const [ successfulChange, showSuccessfulChange ] = useState(false);
     const [ errorMessage, setErrorMessage ] = useState("");
     const [ successMessage, setSuccessMessage ] = useState("");
+    const [ cantFlip, lockFlip ] = useState(false);
+    const [ lastSeenState, changeLastSeen ] = useState(last_seen);
+    const [ statusState, changeStatus ] = useState(status);
 
     const handleEnter = async (e: React.KeyboardEvent<HTMLInputElement>, id: string) => {
         if (e.key === "Enter") {
             e.preventDefault();
 
             try {
+                lockFlip(true);
+
                 await api.patch('friend/change-friend-name', {id: id, name: newName}, {withCredentials: true});
                 setPlaceholderName(newName);
                 setNewName("");
                 setErrorMessage("");
                 showSuccessfulChange(true);
                 setSuccessMessage("Successfully changed name");
+
+                let duration = await api.get(`friend/get-last-seen`, {params: { name: newName }, withCredentials: true});
+                let new_seen = ""
+                
+                if (duration.data.data.last_seen == "Untracked") {
+                    new_seen = `${duration.data.data.last_seen}`;
+                } else if (parseInt(duration.data.data.last_seen) > 1) {
+                    new_seen = `${duration.data.data.last_seen} days ago`;
+                } else {
+                    new_seen = `${duration.data.data.last_seen} day ago`;
+                }
+
+                changeLastSeen(new_seen);
+                changeStatus(duration.data.data.status);
+
+                lockFlip(false);
             } catch (err: any) {
                 setErrorMessage(err.response.data.error);
                 showSuccessfulChange(false);
@@ -46,20 +67,20 @@ function FriendBlock({last_seen, id, changed_name, status}: prop) {
             <div className={flipped? "rotate-y-180 relative ml-5 w-4/5 h-[10vh] transform-3d duration-500": "ml-5 w-4/5 h-[10vh] relative transform-3d duration-500"}> 
                 <div className="absolute inset-0 flex flex-col items-center bg-[#F1EDFF] border-2 border-violet-400 rotate-y-0 hide-back">   
                     <div className="flex justify-center items-center"> 
-                        <FlipButton flipped={flipped} flipOver={flipOver}/>
+                        <FlipButton flipped={flipped} flipOver={flipOver} cantFlip={cantFlip}/>
                         <div className="text-[clamp(0.1rem,1vw,2rem)]">
                             {placeHolderName}
                         </div>  
-                        <div className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5", status === "Green" && "bg-green-400", status === "Orange" && "bg-orange-400", status === "Red" && "bg-red-400"].join(" ")}/> 
+                        <div className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5", statusState === "Green" && "bg-green-400", statusState === "Orange" && "bg-orange-400", statusState === "Red" && "bg-red-400"].join(" ")}/> 
                     </div>
                     <div className="flex gap-[0.5vw] text-[clamp(0.1rem,1vw,2rem)]">
-                        Last Seen: <div className='font-semibold'> {last_seen} </div>  
+                        Last Seen: <div className='font-semibold'> {lastSeenState} </div>  
                     </div>
                 </div>  
 
                 <div className="absolute inset-0 flex flex-col items-center bg-[#F1EDFF] border-2 border-violet-400 rotate-y-180 hide-back"> 
                     <div className="flex justify-center items-center"> 
-                        <FlipButton flipped={flipped} flipOver={flipOver}/>
+                        <FlipButton flipped={flipped} flipOver={flipOver} cantFlip={cantFlip}/>
                         <div className="flex flex-col justify-center items-center">
                             <div className="mt-[0.5vh] text-shadow-2xs text-[clamp(0.1rem,1vw,2rem)]"> 
                                 Change name: 

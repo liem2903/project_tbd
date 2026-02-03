@@ -126,8 +126,6 @@ export async function getLastSeen(name, access_token, time_max) {
         const url = new URL("https://www.googleapis.com/calendar/v3/calendars/primary/events");
         url.searchParams.set("q", name.toLowerCase());
         url.searchParams.set("timeMax", time_max);
-        // url.searchParams.set("singleEvents", true);
-        // url.searchParams.set("orderBy", startTime);
          
         let data = await axios.get(url.toString(), {
             headers: {
@@ -144,7 +142,7 @@ export async function getLastSeen(name, access_token, time_max) {
             } 
         }
 
-        return {status: true, start: startStr} ?? {status: false};
+        return {status: true, start: startStr};
     } catch (err) {
         console.log(err.response?.status);
         console.log(err.response?.data);

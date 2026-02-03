@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { getFriendsBusiness, postFriendRequestBusiness, setFriendRequestBusiness, getFriendRequestsBusiness, changeFriendNameBusiness } from '../business/friendBusiness.js';
+import { getFriendsBusiness, postFriendRequestBusiness, setFriendRequestBusiness, getFriendRequestsBusiness, changeFriendNameBusiness, getLastSeenBusiness } from '../business/friendBusiness.js';
 dotenv.config();
 
 export async function getFriends(req, res) {
@@ -9,6 +9,20 @@ export async function getFriends(req, res) {
         let time_zone = req.time_zone;
 
         let friends = await getFriendsBusiness(user_id, google_id, time_zone);
+        res.status(200).json({status: true, data: friends})
+    } catch (err) {
+        res.status(400).json({status: false});
+    }
+}
+
+export async function getLastSeenControl(req, res) {
+    try {
+        let google_id = req.access_token;
+        let time_zone = req.time_zone;
+        let { name } = req.query;
+
+        let friends = await getLastSeenBusiness(name, google_id, time_zone);
+
         res.status(200).json({status: true, data: friends})
     } catch (err) {
         res.status(400).json({status: false});
