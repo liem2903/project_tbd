@@ -8,6 +8,7 @@ type prop = {
     id: string,
     changed_name: string,
     status: string,
+    openCalender: React.Dispatch<React.SetStateAction<boolean>>
 }
 // Session:
 //  1. Fix spacing issue of friend block - where it decreases in size way too much.
@@ -15,7 +16,7 @@ type prop = {
 //      b. Can not FLIP if name is currently being changed.
 
 
-function FriendBlock({last_seen, id, changed_name, status}: prop) {
+function FriendBlock({last_seen, id, changed_name, status, openCalender}: prop) {
     const [ flipped, flipOver ] = useState(false);
     const [ newName, setNewName] = useState("");
     const [ placeHolderName, setPlaceholderName ] = useState(changed_name);
@@ -71,7 +72,7 @@ function FriendBlock({last_seen, id, changed_name, status}: prop) {
                         <div className="text-[clamp(0.1rem,1vw,2rem)]">
                             {placeHolderName}
                         </div>  
-                        <div className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5", statusState === "Green" && "bg-green-400", statusState === "Orange" && "bg-orange-400", statusState === "Red" && "bg-red-400"].join(" ")}/> 
+                        <button onClick={() => openCalender(true)} className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5 hover:cursor-pointer", statusState === "Green" && "bg-green-400", statusState === "Orange" && "bg-orange-400", statusState === "Red" && "bg-red-400"].join(" ")}/> 
                     </div>
                     <div className="flex gap-[0.5vw] text-[clamp(0.1rem,1vw,2rem)]">
                         Last Seen: <div className='font-semibold'> {lastSeenState} </div>  

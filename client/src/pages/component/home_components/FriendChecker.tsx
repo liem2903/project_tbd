@@ -6,7 +6,12 @@ import { useEffect, useState } from 'react';
 import { type friends, type friendRequest } from "../../../types/types";
 import Spinner from "../global_components/Spinner";
 
-function FriendChecker() {
+type Prop = {
+    openCalender: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+
+function FriendChecker({openCalender}: Prop) {
     const [ friendRequests, setFriendRequests ] = useState<friendRequest[]>([]);
     const [ friendlist, setFriendList ] = useState<friends[]>([]);
     const [ loading, setLoading ] = useState<boolean>(false);
@@ -48,7 +53,7 @@ function FriendChecker() {
                     </div>
                 }
 
-                {loading ? <div></div> : friendlist.map((val) =>  <FriendBlock last_seen={val.last_seen != "Untracked" ? (parseInt(val.last_seen) > 1 ? `${val.last_seen} days ago` : `${val.last_seen} day ago`) : val.last_seen} id={val.id} changed_name={val.changed_name} status={val.status}/>)}
+                {loading ? <div></div> : friendlist.map((val) =>  <FriendBlock openCalender={openCalender} last_seen={val.last_seen != "Untracked" ? (parseInt(val.last_seen) > 1 ? `${val.last_seen} days ago` : `${val.last_seen} day ago`) : val.last_seen} id={val.id} changed_name={val.changed_name} status={val.status}/>)}
             </div>
         </div>
     </>

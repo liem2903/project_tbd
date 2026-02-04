@@ -5,6 +5,8 @@ import { api } from "../../interceptor/interceptor";
 import Spinner from "../component/global_components/Spinner";
 import Events from "./Events";
 import FriendChecker from "../component/home_components/FriendChecker";
+import Calender from "../component/home_components/Calender";
+import Portal from "../component/global_components/Portal";
 
 type Event = {
     eventName: string,
@@ -16,6 +18,7 @@ function Home () {
     const [ events, setEvents ] = useState<Event[]>([]);
     const [ loading, setLoad ] = useState(false);
     const [ reload, setReload ] = useState(false);
+    const [ calenderView, openCalender ] = useState(false);
 
     useEffect(() => {
         const getAccess = async () => {
@@ -46,6 +49,10 @@ function Home () {
 
     return (
         <>  
+            <Portal open={calenderView}> 
+                <Calender calenderView={calenderView} openCalender={openCalender}/>
+            </Portal>
+             
             <div className="flex bg-[#18142c]">
                 <div className="flex flex-col w-fit"> 
                     <Events reload={reload} setReload={setReload}/>
@@ -63,7 +70,7 @@ function Home () {
                             </div>
                     }
                 </div>
-                <FriendChecker/> 
+                <FriendChecker openCalender={openCalender}/> 
             </div>
             
         </>
