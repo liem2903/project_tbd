@@ -37,7 +37,7 @@ export async function getGoogleDetails(req, res) {
         let time_zone  = await getTimezoneBusiness(access_token);        
         let expiry_time = Date.now() + expires_in * 1000;
         redis.set(`google:access:${user.id}`, {access_token, expiry_time, time_zone});
-        
+
         if (refresh_token) {
             await storeRefreshGoogle(user.id, refresh_token);
         }
@@ -150,7 +150,6 @@ export async function logout(req, res) {
         });
 
         console.log(`This access cookie has been removed!`);
-
 
         res.clearCookie("refresh_token", {
             httpOnly: true,

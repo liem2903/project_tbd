@@ -133,6 +133,7 @@ export async function getRefreshToken(user_id) {
         let data = await pool.query(
             `SELECT refresh_token FROM public.google_tokens WHERE user_id = $1`, [user_id]
         )
+        
 
         return data.rows[0].refresh_token;
     } catch (err) {
@@ -157,6 +158,9 @@ export async function refreshAccessToken(refresh_token) {
 
         const data = await res.json();
 
+        console.log(`This is my friend's access token: ${data.access_token}`);
+        console.log(`This is the refresh token: ${refresh_token}`);
+        
         return {
             access_token: data.access_token,
             expires_in: data.expires_in

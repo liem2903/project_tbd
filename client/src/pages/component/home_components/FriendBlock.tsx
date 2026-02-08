@@ -1,14 +1,16 @@
 // Changes colour based on how long ago.
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FlipButton from './FlipButton';
 import { api } from '../../../interceptor/interceptor';
+import type { busyDates } from '../../../types/types';
 
 type prop = {
     last_seen: string,
     id: string,
     changed_name: string,
     status: string,
-    openCalender: React.Dispatch<React.SetStateAction<boolean>>
+    openCalender: React.Dispatch<React.SetStateAction<boolean>>,
+    setBusyDates: React.Dispatch<React.SetStateAction<busyDates[]>>
 }
 // Session:
 //  1. Fix spacing issue of friend block - where it decreases in size way too much.
@@ -16,7 +18,7 @@ type prop = {
 //      b. Can not FLIP if name is currently being changed.
 
 
-function FriendBlock({last_seen, id, changed_name, status, openCalender}: prop) {
+function FriendBlock({last_seen, id, changed_name, status, openCalender, setBusyDates}: prop) {
     const [ flipped, flipOver ] = useState(false);
     const [ newName, setNewName] = useState("");
     const [ placeHolderName, setPlaceholderName ] = useState(changed_name);
@@ -63,6 +65,26 @@ function FriendBlock({last_seen, id, changed_name, status, openCalender}: prop) 
         }
     }
 
+    const handleOpenCalender = async () => {
+        // Use the friend id - call DB and get their google refresh token. Then using that call access token end point and get one.
+        let taken_slots = await api.get(`/friend/get-availabilities`, {params: {friend_id: id}, withCredentials: true});
+
+        console.log(taken_slots.data);
+
+        const events = taken_slots.data.data.map((b: busyDates) => ({
+            start: b.start,
+            end: b.end,
+            display: "background",
+            backgroundColor: "rgba(255, 0, 0, 0.4)",
+            overlap: false,
+        }));
+
+        console.log(events);
+
+        setBusyDates(events);
+        openCalender(true);
+    }
+
     return <>
         <div className='perspective-[1000px]'>
             <div className={flipped? "rotate-y-180 relative ml-5 w-4/5 h-[10vh] transform-3d duration-500": "ml-5 w-4/5 h-[10vh] relative transform-3d duration-500"}> 
@@ -72,7 +94,7 @@ function FriendBlock({last_seen, id, changed_name, status, openCalender}: prop) 
                         <div className="text-[clamp(0.1rem,1vw,2rem)]">
                             {placeHolderName}
                         </div>  
-                        <button onClick={() => openCalender(true)} className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5 hover:cursor-pointer", statusState === "Green" && "bg-green-400", statusState === "Orange" && "bg-orange-400", statusState === "Red" && "bg-red-400"].join(" ")}/> 
+                        <button onClick={() => handleOpenCalender()} className={["w-[1.25vw] h-[2.5vh] rounded-full absolute right-1 top-0.5 hover:cursor-pointer", statusState === "Green" && "bg-green-400", statusState === "Orange" && "bg-orange-400", statusState === "Red" && "bg-red-400"].join(" ")}/> 
                     </div>
                     <div className="flex gap-[0.5vw] text-[clamp(0.1rem,1vw,2rem)]">
                         Last Seen: <div className='font-semibold'> {lastSeenState} </div>  

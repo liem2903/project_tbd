@@ -7,6 +7,7 @@ import Events from "./Events";
 import FriendChecker from "../component/home_components/FriendChecker";
 import Calender from "../component/home_components/Calender";
 import Portal from "../component/global_components/Portal";
+import type { busyDates } from "../../types/types";
 
 type Event = {
     eventName: string,
@@ -19,6 +20,7 @@ function Home () {
     const [ loading, setLoad ] = useState(false);
     const [ reload, setReload ] = useState(false);
     const [ calenderView, openCalender ] = useState(false);
+    const [ busyDates, setBusyDates ] = useState<busyDates[]>([]);
 
     useEffect(() => {
         const getAccess = async () => {
@@ -50,7 +52,7 @@ function Home () {
     return (
         <>  
             <Portal open={calenderView}> 
-                <Calender calenderView={calenderView} openCalender={openCalender}/>
+                <Calender calenderView={calenderView} openCalender={openCalender} busyDates={busyDates}/>
             </Portal>
              
             <div className="flex bg-[#18142c]">
@@ -70,7 +72,7 @@ function Home () {
                             </div>
                     }
                 </div>
-                <FriendChecker openCalender={openCalender}/> 
+                <FriendChecker openCalender={openCalender} setBusyDates={setBusyDates}/> 
             </div>
             
         </>

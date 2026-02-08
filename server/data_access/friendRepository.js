@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import pool from '../data.js';
 import axios from 'axios';
+import { DateTime } from 'luxon';
 
 export async function getFriendsData(user_id) {
     try {
@@ -146,5 +147,48 @@ export async function getLastSeen(name, access_token, time_max) {
     } catch (err) {
         console.log(err.response?.status);
         console.log(err.response?.data);
+    }
+}
+
+export async function isFriends(user_id, friend_id) {
+    try {
+        let id = await pool.query('SELECT * FROM public.friendships WHERE user_id = $1 AND friend_id = $2', [user_id, friend_id]);
+
+        if (id.rowCount == 0) {
+            throw new Error("They are not friends");
+        }
+
+        return id.rows;
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
+export async function getBusyPeriods(access_token, time_zone) {
+    try {
+        let url = new URL('https://www.googleapis.com/calendar/v3/freeBusy');
+
+        const body = {
+            timeMin: DateTime.now().setZone(time_zone),
+            timeMax: DateTime.now().setZone(time_zone).plus({days: 90}), 
+            items: [{ id: "primary" }],
+        };
+
+        let data = await axios.post(url.toString(), body, {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            },
+        });
+
+        let new_dates = data.data.calendars.primary.busy;
+        let actual_dates = []
+
+        for (const { start, end } of new_dates) {
+           actual_dates.push({start: DateTime.fromISO(start).setZone(time_zone), end: DateTime.fromISO(end).setZone(time_zone)});
+        }
+
+        return actual_dates;
+    } catch (err) {
+        console.log(err.message)
     }
 }

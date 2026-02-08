@@ -13,3 +13,13 @@ export type friends = {
     last_seen: string,
     status: string,
 }
+
+export type busyDates = {
+    start: string,
+    end: string,
+    display: string,
+    overlap: boolean,
+}
+
+
+ 

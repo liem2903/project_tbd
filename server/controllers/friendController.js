@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { getFriendsBusiness, postFriendRequestBusiness, setFriendRequestBusiness, getFriendRequestsBusiness, changeFriendNameBusiness, getLastSeenBusiness } from '../business/friendBusiness.js';
+import { getFriendsBusiness, postFriendRequestBusiness, setFriendRequestBusiness, getFriendRequestsBusiness, changeFriendNameBusiness, getLastSeenBusiness, getAvailabilitiesBusiness } from '../business/friendBusiness.js';
 dotenv.config();
 
 export async function getFriends(req, res) {
@@ -81,6 +81,22 @@ export async function changeFriendName(req, res) {
 
         res.status(200).json({status: true})
     } catch (err) {                        
+        res.status(400).json({status: false, error: err.message})
+    }
+}
+
+export async function getAvailabilities(req, res) {
+    try {
+        let my_id = req.user.user_id;
+        let my_google_id = req.access_token;    
+        
+        let { friend_id } = req.query;
+        
+        // Pass into big boy business logic
+        let data = await getAvailabilitiesBusiness(my_id, my_google_id, friend_id);        
+        
+        res.status(200).json({status: true, data});
+    } catch (err) {
         res.status(400).json({status: false, error: err.message})
     }
 }
